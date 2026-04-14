@@ -1905,16 +1905,16 @@ export default function App() {
                 </div>
               </div>
             ) : null}
-            {sidebarOpen ? (
-            <button className="new-chat-button" onClick={handleNewChat}>
-              <span className="new-chat-icon">+</span>
-              <span>New chat</span>
-            </button>
-          ) : null}
         </div>
 
         {showSidebarContent ? (
           <>
+            <div className="sidebar-quick-actions">
+              <button className="sidebar-quick-button" onClick={handleNewChat}>
+                <span className="sidebar-quick-icon" aria-hidden="true">+</span>
+                <span>New chat</span>
+              </button>
+            </div>
             <div className="sidebar-panel sidebar-tools-panel sidebar-section-plain">
               <div className="sidebar-section-head">
                 <span>Assistants</span>

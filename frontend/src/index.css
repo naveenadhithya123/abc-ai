@@ -265,6 +265,41 @@ button, input, textarea, select { font: inherit; cursor: pointer; }
   border-bottom: 1px solid rgba(148, 163, 184, 0.12);
 }
 
+.sidebar-quick-actions {
+  padding: 6px 2px 4px;
+}
+
+.sidebar-quick-button {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font-size: 0.78rem;
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.sidebar-quick-button:hover {
+  background: rgba(255,255,255,0.045);
+}
+
+.sidebar-quick-icon {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: 1px solid rgba(148,163,184,0.18);
+  background: rgba(15, 23, 42, 0.45);
+  color: var(--text);
+}
+
 .sidebar-brand {
   display: flex;
   align-items: center;
