@@ -318,6 +318,10 @@ export async function chatCompletion({
   } catch (error) {
     const message = String(error?.message || "");
 
+    if (/401|403|unauthorized|forbidden|incorrect api key|invalid api key|permission denied/i.test(message)) {
+      return chatCompletionWithGroq({ messages, temperature, maxTokens });
+    }
+
     if (/429|rate limit|too many requests|status code \(no body\)/i.test(message)) {
       throw new Error("The AI model is busy right now. Please try again in a few seconds.");
     }
