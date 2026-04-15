@@ -593,32 +593,7 @@ export default function App() {
         errorDescription: "",
       };
     };
-
-    const initializeSession = async () => {
-      try {
-        if (initialCallback.code) {
-          const { error } = await supabase.auth.exchangeCodeForSession(initialCallback.code);
-          if (error) {
-            const normalized = String(error.message || "");
-            if (!/pkce code verifier not found/i.test(normalized)) {
-              setAuthNotice({
-                tone: "error",
-                text: error.message || "Google sign-in could not be completed.",
-              });
-            }
-          }
-        }
-      } catch (error) {
-        const normalized = String(error?.message || "");
-        if (!/pkce code verifier not found/i.test(normalized)) {
-          setAuthNotice({
-            tone: "error",
-            text: error?.message || "Google sign-in could not be completed.",
-          });
-        }
-      }
-
-      const { data } = await supabase.auth.getSession();
+    supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
 
       if (
@@ -632,9 +607,12 @@ export default function App() {
       ) {
         finishAuthCallback();
       }
-    };
-
-    initializeSession();
+    }).catch((error) => {
+      setAuthNotice({
+        tone: "error",
+        text: error?.message || "Google sign-in could not be completed.",
+      });
+    });
 
     const {
       data: { subscription },
