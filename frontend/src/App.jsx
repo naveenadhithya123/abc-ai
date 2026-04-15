@@ -583,30 +583,8 @@ export default function App() {
         errorDescription: "",
       };
     }
-    const finishAuthCallback = () => {
-      clearAuthCallbackUrl();
-      authCallbackRef.current = {
-        type: "",
-        code: "",
-        tokenHash: "",
-        hasSessionTokens: false,
-        errorDescription: "",
-      };
-    };
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
-
-      if (
-        data.session &&
-        (
-          authCallbackRef.current.code ||
-          authCallbackRef.current.tokenHash ||
-          authCallbackRef.current.hasSessionTokens ||
-          authCallbackRef.current.type === "signup"
-        )
-      ) {
-        finishAuthCallback();
-      }
     }).catch((error) => {
       setAuthNotice({
         tone: "error",
@@ -625,18 +603,6 @@ export default function App() {
           email: nextSession.user.email,
           fullName: nextSession.user.user_metadata?.full_name || "",
         });
-      }
-
-      if (
-        event === "SIGNED_IN" &&
-        (
-          authCallbackRef.current.code ||
-          authCallbackRef.current.tokenHash ||
-          authCallbackRef.current.hasSessionTokens ||
-          authCallbackRef.current.type === "signup"
-        )
-      ) {
-        finishAuthCallback();
       }
     });
 
