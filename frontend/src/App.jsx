@@ -599,17 +599,23 @@ export default function App() {
         if (initialCallback.code) {
           const { error } = await supabase.auth.exchangeCodeForSession(initialCallback.code);
           if (error) {
-            setAuthNotice({
-              tone: "error",
-              text: error.message || "Google sign-in could not be completed.",
-            });
+            const normalized = String(error.message || "");
+            if (!/pkce code verifier not found/i.test(normalized)) {
+              setAuthNotice({
+                tone: "error",
+                text: error.message || "Google sign-in could not be completed.",
+              });
+            }
           }
         }
       } catch (error) {
-        setAuthNotice({
-          tone: "error",
-          text: error?.message || "Google sign-in could not be completed.",
-        });
+        const normalized = String(error?.message || "");
+        if (!/pkce code verifier not found/i.test(normalized)) {
+          setAuthNotice({
+            tone: "error",
+            text: error?.message || "Google sign-in could not be completed.",
+          });
+        }
       }
 
       const { data } = await supabase.auth.getSession();
