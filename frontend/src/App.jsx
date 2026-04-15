@@ -583,8 +583,36 @@ export default function App() {
         errorDescription: "",
       };
     }
+    const finishAuthCallback = () => {
+      clearAuthCallbackUrl();
+      authCallbackRef.current = {
+        type: "",
+        code: "",
+        tokenHash: "",
+        hasSessionTokens: false,
+        errorDescription: "",
+      };
+    };
 
-    supabase.auth.getSession().then(({ data }) => {
+    const initializeSession = async () => {
+      try {
+        if (initialCallback.code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(initialCallback.code);
+          if (error) {
+            setAuthNotice({
+              tone: "error",
+              text: error.message || "Google sign-in could not be completed.",
+            });
+          }
+        }
+      } catch (error) {
+        setAuthNotice({
+          tone: "error",
+          text: error?.message || "Google sign-in could not be completed.",
+        });
+      }
+
+      const { data } = await supabase.auth.getSession();
       setSession(data.session);
 
       if (
@@ -596,16 +624,11 @@ export default function App() {
           authCallbackRef.current.type === "signup"
         )
       ) {
-        clearAuthCallbackUrl();
-        authCallbackRef.current = {
-          type: "",
-          code: "",
-          tokenHash: "",
-          hasSessionTokens: false,
-          errorDescription: "",
-        };
+        finishAuthCallback();
       }
-    });
+    };
+
+    initializeSession();
 
     const {
       data: { subscription },
@@ -629,14 +652,7 @@ export default function App() {
           authCallbackRef.current.type === "signup"
         )
       ) {
-        clearAuthCallbackUrl();
-        authCallbackRef.current = {
-          type: "",
-          code: "",
-          tokenHash: "",
-          hasSessionTokens: false,
-          errorDescription: "",
-        };
+        finishAuthCallback();
       }
     });
 
