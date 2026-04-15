@@ -598,11 +598,20 @@ export default function App() {
       setSession(nextSession);
 
       if (nextSession?.user) {
-        await bootstrapProfile({
-          id: nextSession.user.id,
-          email: nextSession.user.email,
-          fullName: nextSession.user.user_metadata?.full_name || "",
-        });
+        try {
+          await bootstrapProfile({
+            id: nextSession.user.id,
+            email: nextSession.user.email,
+            fullName: nextSession.user.user_metadata?.full_name || "",
+          });
+        } catch (error) {
+          setAuthNotice({
+            tone: "error",
+            text:
+              error?.message ||
+              "Signed in, but the backend is unavailable right now. Your profile sync will retry later.",
+          });
+        }
       }
     });
 
@@ -714,7 +723,18 @@ export default function App() {
     let isCancelled = false;
 
     async function loadInitialData() {
-      await loadHistory();
+      try {
+        await loadHistory();
+      } catch (error) {
+        if (!isCancelled) {
+          setAuthNotice({
+            tone: "error",
+            text:
+              error?.message ||
+              "Signed in, but chat history could not be loaded because the backend is unavailable.",
+          });
+        }
+      }
 
       const shareToken = hasProcessedEntryShareRef.current ? "" : entryShareTokenRef.current;
       hasProcessedEntryShareRef.current = true;
